@@ -1,0 +1,22 @@
+package com.pistasien.clothingstore.service;
+
+import com.pistasien.clothingstore.entity.User;
+import com.pistasien.clothingstore.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> getallusers(){
+        return userRepository.findAll();
+    }
+}
