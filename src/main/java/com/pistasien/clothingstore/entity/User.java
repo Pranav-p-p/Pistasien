@@ -42,6 +42,20 @@ public class User {
     @Column(name = "created_at",nullable = false)
     private LocalDateTime created_at;
 
+    @Getter
+    @Setter
+    @Column(name = "user_phone",nullable = false,unique = true)
+    private String userPhone;
+
+    @Getter
+    @Setter
+    @Column(name = "opt_in")
+    private boolean option;
+
+    @Setter
+    @Column(name = "opt_in_at")
+    private LocalDateTime optInAt;
+
     public User(){}
 
     public User(String email, String password){
@@ -72,4 +86,5 @@ public class User {
     public LocalDateTime getCreted_at(){
         return created_at;
     }
+
 }

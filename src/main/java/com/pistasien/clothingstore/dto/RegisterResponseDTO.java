@@ -4,6 +4,8 @@ import com.pistasien.clothingstore.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 public class RegisterResponseDTO {
     @Getter
     private Long responseId;
@@ -13,7 +15,13 @@ public class RegisterResponseDTO {
     @Getter
     private String responseUserName;
     private User.Role responseRole;
+    @Getter
+    @Setter
+    private String responsePhone;
 
+    @Getter
+    @Setter
+    private LocalDateTime createdAt;
     public void setResponse_id(Long responseId){
         this.responseId = responseId;
     }

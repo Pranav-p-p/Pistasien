@@ -3,26 +3,28 @@ package com.pistasien.clothingstore.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 public class RegisterRequestDTO {
     @Getter
-    @Email(message = "Invalid email format")
-    @Pattern(
-            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$",
-            message = "Email must contain a valid domain (example: user@gmail.com)"
-    )
-    private String email;
+    private String phone;
     @Getter
     private String userName;
     @Getter
     private String password;
+    @Getter
+    @Setter
+    private String userEmail;
+    @Setter
+    @Getter
+    private boolean option;
 
     public RegisterRequestDTO(){}
 
     public void setUserName(){this.userName = userName; }
 
-    public void setEmail(){
-        this.email = email;
+    public void setIdentifier(){
+        this.phone = phone;
     }
 
     public void setPassword(){

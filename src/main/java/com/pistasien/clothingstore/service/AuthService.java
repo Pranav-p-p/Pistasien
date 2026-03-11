@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,12 +29,14 @@ public class AuthService {
     }
 
     public RegisterResponseDTO createUser(RegisterRequestDTO request){
-        Optional<User> existing = repository.findByUserEmail(request.getEmail());
+        Optional<User> existing = repository.findByUserPhone(request.getPhone());
         if(existing.isPresent()){
-            throw new UserFoundException(request.getEmail());
+            throw new UserFoundException(request.getPhone());
         }
         User user = new User();
-        user.setUser_email(request.getEmail());
+
+        user.setUserPhone(request.getPhone());
+        user.setUser_email(request.getUserEmail());
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setUser_password(encoder.encode(request.getPassword()));
@@ -45,6 +46,11 @@ public class AuthService {
         user.setRole(User.Role.customer);
 
         user.setCreated_at(LocalDateTime.now());
+
+        if(request.isOption()){
+            user.setOption(true);
+            user.setOptInAt(LocalDateTime.now());
+        }
 
         User saved = repository.save(user);
 
@@ -56,6 +62,10 @@ public class AuthService {
 
         response.setResponseUserName(saved.getUserName());
 
+        response.setResponsePhone(saved.getUserPhone());
+
+        response.setCreatedAt(saved.getCreted_at());
+
         response.setResponse_role();
 
         return response;
@@ -63,7 +73,7 @@ public class AuthService {
 
     public LoginResponseDTO loginService(LoginRequestDTO loginRequest){
 
-        Optional<User> existing = repository.findByUserEmail(loginRequest.getEmail());
+        Optional<User> existing = repository.findByUserPhone(loginRequest.getEmail());
 
         if(!existing.isPresent()){
             throw new UserNotFoundException("Invalid Credentials.");
