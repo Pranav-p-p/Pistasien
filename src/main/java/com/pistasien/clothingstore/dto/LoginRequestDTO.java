@@ -1,24 +1,18 @@
 package com.pistasien.clothingstore.dto;
 
-import jakarta.validation.constraints.Pattern;
-
 public class LoginRequestDTO {
 
-    @Pattern(
-            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
-            message = "Invalid email"
-    )
-    private String email;
+    private String input;
     private String password;
 
     public LoginRequestDTO(){}
 
     public void setEmail(){
-        this.email = email;
+        this.input = input;
     }
 
-    public String getEmail(){
-        return email;
+    public String getInput(){
+        return input;
     }
 
     public void setPassword(){

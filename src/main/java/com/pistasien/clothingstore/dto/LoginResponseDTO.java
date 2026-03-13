@@ -20,6 +20,10 @@ public class LoginResponseDTO {
 
     @Getter
     @Setter
-    private String LoginResponseEmail;
+    private String loginResponseEmail;
+
+    @Getter
+    @Setter
+    private String loginResponsePhone;
 
 }

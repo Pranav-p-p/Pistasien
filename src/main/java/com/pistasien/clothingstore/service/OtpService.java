@@ -86,7 +86,7 @@ public class OtpService {
         if(!verifyOtp.getOtpCode().equals(request.getOtp())){
             throw new RuntimeException("Invalid OTP.");
         }
-
+        otpRepository.delete(verifyOtp);
         response.setResult(true);
         return response;
     }

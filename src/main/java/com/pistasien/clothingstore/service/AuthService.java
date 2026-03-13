@@ -73,30 +73,66 @@ public class AuthService {
 
     public LoginResponseDTO loginService(LoginRequestDTO loginRequest){
 
-        Optional<User> existing = repository.findByUserPhone(loginRequest.getEmail());
+        Optional<User> existing = repository.findByUserPhone(loginRequest.getInput());
+        Optional<User> existingEmail = repository.findByUserEmail(loginRequest.getInput());
 
-        if(!existing.isPresent()){
+        if(!existing.isPresent() && !existingEmail.isPresent()){
             throw new UserNotFoundException("Invalid Credentials.");
         }
 
-        User user = existing.get();
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        String phoneRegex = "^(\\+91)?[6-9][0-9]{9}$";
+        User user;
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String loginPassword = loginRequest.getPassword();
-        String savedPassword = user.getUser_password();
-
-        if(!passwordEncoder.matches(loginPassword,savedPassword)){
-            throw new IncorrectPassword("Invalid Credentials.");
+        if(existing.isPresent()) {
+            user = existing.get();
+        }else {
+            user = existingEmail.get();
         }
 
         LoginResponseDTO responseDTO = new LoginResponseDTO();
 
-        responseDTO.setLoginToken(jwtUtil.generateToken(
-                user.getUser_id(),user.getUser_email(),user.getRole()));
+        if(loginRequest.getInput().matches(emailRegex)){
+            repository.findByUserEmail(loginRequest.getInput())
+                    .orElseThrow(() -> new RuntimeException(
+                            "No account found. Try logging with phone number"));
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String loginPassword = loginRequest.getPassword();
+            String savedPassword = user.getUser_password();
 
-        responseDTO.setLoginResponseEmail(user.getUser_email());
-        responseDTO.setLoginResponseId(user.getUser_id());
-        responseDTO.setLoginResponseRole(user.getRole());
+            if(!passwordEncoder.matches(loginPassword,savedPassword)){
+                throw new IncorrectPassword("Invalid Credentials.");
+            }
+
+            responseDTO.setLoginToken(jwtUtil.generateToken(
+                    user.getUser_id(),user.getUser_email(),user.getRole()));
+
+            responseDTO.setLoginResponseEmail(user.getUser_email());
+            responseDTO.setLoginResponseId(user.getUser_id());
+            responseDTO.setLoginResponseRole(user.getRole());
+            responseDTO.setLoginResponsePhone(user.getUserPhone());
+
+        } else if (loginRequest.getInput().matches(phoneRegex)) {
+            repository.findByUserPhone(loginRequest.getInput())
+                    .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String loginPassword = loginRequest.getPassword();
+            String savedPassword = user.getUser_password();
+
+            if(!passwordEncoder.matches(loginPassword,savedPassword)) {
+                throw new IncorrectPassword("Invalid Credentials.");
+            }
+
+            responseDTO.setLoginToken(jwtUtil.generateToken(
+                    user.getUser_id(),user.getUser_email(),user.getRole()));
+
+            responseDTO.setLoginResponsePhone(user.getUserPhone());
+            responseDTO.setLoginResponseId(user.getUser_id());
+            responseDTO.setLoginResponseRole(user.getRole());
+            responseDTO.setLoginResponseEmail(user.getUser_email());
+            
+        }
 
         return responseDTO;
     }
