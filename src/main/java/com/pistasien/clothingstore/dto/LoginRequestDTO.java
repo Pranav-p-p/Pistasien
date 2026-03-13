@@ -1,22 +1,18 @@
 package com.pistasien.clothingstore.dto;
 
+import lombok.Setter;
+
 public class LoginRequestDTO {
 
+    @Setter
     private String input;
+    @Setter
     private String password;
 
     public LoginRequestDTO(){}
 
-    public void setEmail(){
-        this.input = input;
-    }
-
     public String getInput(){
         return input;
-    }
-
-    public void setPassword(){
-        this.password = password;
     }
 
     public String getPassword(){

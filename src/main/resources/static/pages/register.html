@@ -1,19 +1,48 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Register</title>
+    <link rel="stylesheet" href="/css/register.css">
 </head>
+
 <body>
+
+<div class="container">
+
     <h2>Register</h2>
 
-    <div class="registerContainer">
-        <form id="registerForm">
-            <input type="text">
-        </form>
-    </div>
+    <form id="registerForm">
+
+        <input type="text" id="phone" placeholder="Phone number" required>
+
+        <div id="otpSection" style="display:none;">
+            <input type="text" id="otp" placeholder="Enter OTP">
+        </div>
+
+        <div id="userDetails" style="display:none;">
+            <input type="email" id="email" placeholder="Email">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <label class="consent">
+                <input type="checkbox" id="adsConsent">
+                I agree to receive promotional ads
+            </label>
+        </div>
+
+        <button type="button" id="actionBtn">Send OTP</button>
+
+    </form>
+
+    <p id="message"></p>
+
+    <p class="login-link">
+        Already have an account?
+        <a href="login.html">Login here</a>
+    </p>
+
+</div>
+
+<script src="/js/register.js"></script>
+
 </body>
 </html>

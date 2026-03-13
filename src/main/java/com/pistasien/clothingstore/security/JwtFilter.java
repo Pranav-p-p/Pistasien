@@ -27,8 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException{
         String header = request.getHeader("Authorization");
 
-        System.out.println("Header = " + header);
-
         if(header != null && header.startsWith("Bearer ")){
 
             String token = header.substring(7);
@@ -36,8 +34,13 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 jwtUtil.validateToken(token);
             }catch (Exception e){
-                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+
+                response.getWriter().write(
+                        "{\"error\": \"Invalid or expired token\"}"
+                );
+
                 return;
             }
         }

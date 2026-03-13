@@ -6,6 +6,7 @@ import com.pistasien.clothingstore.dto.VerifyOtpRequestDTO;
 import com.pistasien.clothingstore.dto.VerifyOtpResponseDTO;
 import com.pistasien.clothingstore.entity.Otp;
 import com.pistasien.clothingstore.exception.AttemptLimitReachedException;
+import com.pistasien.clothingstore.exception.InvalidInputFormatException;
 import com.pistasien.clothingstore.exception.OtpExpiredException;
 import com.pistasien.clothingstore.repository.OtpRepository;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,11 @@ public class OtpService {
         OtpRequestResponseDTO response = new OtpRequestResponseDTO();
 
         Optional<Otp> exist = otpRepository.findByOtpPhone(request.getPhone());
+        String phoneRegex = "^(\\+91)?[6-9][0-9]{9}$";
+
+        if (!request.getPhone().matches(phoneRegex)){
+            throw new InvalidInputFormatException("Incorrect Email / Phone no");
+        }
 
         if(exist.isPresent()){
             Otp present = exist.get();

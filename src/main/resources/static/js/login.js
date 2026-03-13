@@ -4,7 +4,7 @@ const form = document.getElementById("loginForm");
 form.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
+    const input = document.getElementById("input").value;
     const password = document.getElementById("password").value;
 
     fetch("http://localhost:8080/auth/login" ,{
@@ -15,17 +15,34 @@ form.addEventListener("submit", function(event) {
         },
 
         body: JSON.stringify({
-            email: email,
+            input: input,
             password: password
         })
     })
-    .then(response => response.json())
+    .then(async response => {
+
+                        const data = await response.json();
+
+                        if(!response.ok){
+                            throw new Error(data.error);
+
+                       }
+                       return data;
+
+                    })
     .then(data => {
         console.log("Server response:", data);
 
         localStorage.setItem("token", data.loginToken);
+        localStorage.setItem("id", data.user.loginResponseId);
+        localStorage.setItem("phone", data.user.loginResponsePhone);
+        localStorage.setItem("email", data.user.loginResponseEmail);
+        localStorage.setItem("role", data.user.loginResponseRole);
 
         window.location.href = "dashboard.html";
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => {
+                document.getElementById("message").innerText =
+                                           error.message;
+            });
 });

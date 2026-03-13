@@ -7,19 +7,18 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 public class RegisterResponseDTO {
-    @Getter
     private Long responseId;
-    @Getter
     private String responseEmail;
     @Setter
-    @Getter
     private String responseUserName;
     private User.Role responseRole;
-    @Getter
     @Setter
     private String responsePhone;
 
+    @Setter
     @Getter
+    private boolean created;
+
     @Setter
     private LocalDateTime createdAt;
     public void setResponse_id(Long responseId){
@@ -34,7 +33,4 @@ public class RegisterResponseDTO {
         this.responseRole = User.Role.customer;
     }
 
-    public User.Role getResponseRole(){
-        return User.Role.customer;
-    }
 }

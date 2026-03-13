@@ -21,14 +21,13 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String generateToken(Long userId, String userEmail, User.Role userRole){
+    public String generateToken(Long userId, User.Role userRole){
 
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
-                .setSubject(userEmail)
-                .claim("id",userId)
-                .claim("role",userRole)
+                .setSubject(String.valueOf(userId))   // identity of the user
+                .claim("role", userRole)                  // authorization
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)

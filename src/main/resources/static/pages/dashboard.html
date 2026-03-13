@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Dashboard</title>
+
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="logo">MyStore</div>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+</header>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Products</li>
+            <li>Cart</li>
+            <li>Orders</li>
+            <li>Profile</li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <h2>Dashboard</h2>
+
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <h3>Profile</h3>
+
+            <div class="profile-card">
+                <p><strong>Email:</strong> <span id="email"></span></p>
+                <p><strong>Phone:</strong> <span id="phone"></span></p>
+                <p><strong>Role:</strong> <span id="role"></span></p>
+            </div>
+        </section>
+
+        <!-- Recent Products -->
+        <section class="products-section">
+            <h3>Recent Products</h3>
+
+            <div class="products-grid">
+
+                <div class="product-card">
+                    <h4>Wireless Headphones</h4>
+                    <p>$99</p>
+                </div>
+
+                <div class="product-card">
+                    <h4>Gaming Mouse</h4>
+                    <p>$49</p>
+                </div>
+
+                <div class="product-card">
+                    <h4>Mechanical Keyboard</h4>
+                    <p>$129</p>
+                </div>
+
+                <div class="product-card">
+                    <h4>USB-C Hub</h4>
+                    <p>$39</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/dashboard.js"></script>
+
+</body>
+</html>

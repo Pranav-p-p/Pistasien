@@ -1,13 +1,8 @@
 package com.pistasien.clothingstore.service;
 
-import com.pistasien.clothingstore.dto.LoginRequestDTO;
-import com.pistasien.clothingstore.dto.LoginResponseDTO;
-import com.pistasien.clothingstore.dto.RegisterRequestDTO;
-import com.pistasien.clothingstore.dto.RegisterResponseDTO;
+import com.pistasien.clothingstore.dto.*;
 import com.pistasien.clothingstore.entity.User;
-import com.pistasien.clothingstore.exception.IncorrectPassword;
-import com.pistasien.clothingstore.exception.UserFoundException;
-import com.pistasien.clothingstore.exception.UserNotFoundException;
+import com.pistasien.clothingstore.exception.*;
 import com.pistasien.clothingstore.repository.UserRepository;
 import com.pistasien.clothingstore.security.JwtUtil;
 import org.springframework.stereotype.Service;
@@ -33,10 +28,24 @@ public class AuthService {
         if(existing.isPresent()){
             throw new UserFoundException(request.getPhone());
         }
-        User user = new User();
 
+        if(request.getUserName().isBlank()){
+            throw new UserNameCannotBeBlankException("Username cannot be empty.");
+        }
+
+        if (request.getPassword().isBlank()){
+            throw new PasswordCannotBeBlankException("Password cannot be empty.");
+        }
+
+        User user = new User();
+        System.out.println("Email received: " + request.getUserEmail());
         user.setUserPhone(request.getPhone());
-        user.setUser_email(request.getUserEmail());
+        if (request.getUserEmail() != null && request.getUserEmail().isBlank()) {
+            user.setUser_email(null);
+        }
+        else {
+            user.setUser_email(request.getUserEmail());
+                }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setUser_password(encoder.encode(request.getPassword()));
@@ -56,6 +65,8 @@ public class AuthService {
 
         RegisterResponseDTO response = new RegisterResponseDTO();
 
+        response.setCreated(true);
+
         response.setResponse_id(saved.getUser_id());
 
         response.setResponse_email(saved.getUser_email());
@@ -73,29 +84,20 @@ public class AuthService {
 
     public LoginResponseDTO loginService(LoginRequestDTO loginRequest){
 
-        Optional<User> existing = repository.findByUserPhone(loginRequest.getInput());
-        Optional<User> existingEmail = repository.findByUserEmail(loginRequest.getInput());
-
-        if(!existing.isPresent() && !existingEmail.isPresent()){
-            throw new UserNotFoundException("Invalid Credentials.");
-        }
-
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         String phoneRegex = "^(\\+91)?[6-9][0-9]{9}$";
         User user;
-
-        if(existing.isPresent()) {
-            user = existing.get();
-        }else {
-            user = existingEmail.get();
-        }
-
-        LoginResponseDTO responseDTO = new LoginResponseDTO();
+        LoginResponseDTO response = null;
 
         if(loginRequest.getInput().matches(emailRegex)){
-            repository.findByUserEmail(loginRequest.getInput())
-                    .orElseThrow(() -> new RuntimeException(
-                            "No account found. Try logging with phone number"));
+            Optional<User> existing = repository.findByUserEmail(loginRequest.getInput());
+
+            if(!existing.isPresent()){
+                throw new UserNotFoundException("Try logging in using Phone no");
+            }
+
+            user = existing.get();
+
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String loginPassword = loginRequest.getPassword();
             String savedPassword = user.getUser_password();
@@ -104,17 +106,22 @@ public class AuthService {
                 throw new IncorrectPassword("Invalid Credentials.");
             }
 
-            responseDTO.setLoginToken(jwtUtil.generateToken(
-                    user.getUser_id(),user.getUser_email(),user.getRole()));
+            String token = jwtUtil.generateToken(user.getUser_id(),
+                    user.getRole());
 
-            responseDTO.setLoginResponseEmail(user.getUser_email());
-            responseDTO.setLoginResponseId(user.getUser_id());
-            responseDTO.setLoginResponseRole(user.getRole());
-            responseDTO.setLoginResponsePhone(user.getUserPhone());
+            UserDTO userResponse = new UserDTO(user.getUser_id(), user.getRole(),
+                    user.getUser_email(), user.getUserPhone());
+
+            response = new LoginResponseDTO(token, userResponse);
 
         } else if (loginRequest.getInput().matches(phoneRegex)) {
-            repository.findByUserPhone(loginRequest.getInput())
-                    .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+            Optional<User> existing = repository.findByUserPhone(loginRequest.getInput());
+
+            if(!existing.isPresent()){
+                throw new UserNotFoundException("Try logging in using Phone no");
+            }
+
+            user = existing.get();
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String loginPassword = loginRequest.getPassword();
@@ -124,17 +131,19 @@ public class AuthService {
                 throw new IncorrectPassword("Invalid Credentials.");
             }
 
-            responseDTO.setLoginToken(jwtUtil.generateToken(
-                    user.getUser_id(),user.getUser_email(),user.getRole()));
+            String token = jwtUtil.generateToken(user.getUser_id(),
+                    user.getRole());
 
-            responseDTO.setLoginResponsePhone(user.getUserPhone());
-            responseDTO.setLoginResponseId(user.getUser_id());
-            responseDTO.setLoginResponseRole(user.getRole());
-            responseDTO.setLoginResponseEmail(user.getUser_email());
+            UserDTO userResponse = new UserDTO(user.getUser_id(), user.getRole(),
+                    user.getUser_email(), user.getUserPhone());
+
+            response = new LoginResponseDTO(token, userResponse);
             
+        }else {
+            throw new InvalidInputFormatException("Invalid Email/Phone no");
         }
 
-        return responseDTO;
+        return response;
     }
 
 }
