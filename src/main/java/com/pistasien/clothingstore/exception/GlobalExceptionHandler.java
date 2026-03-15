@@ -1,4 +1,4 @@
-package com.pistasien.clothingstore.controller;
+package com.pistasien.clothingstore.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

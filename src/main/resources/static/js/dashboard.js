@@ -18,10 +18,10 @@ function loadUserProfile() {
     const email = localStorage.getItem("email");
     const phone = localStorage.getItem("phone");
     const role = localStorage.getItem("role");
+    const id = localStorage.getItem("id");
 
     document.getElementById("email").textContent = email || "N/A";
     document.getElementById("phone").textContent = phone || "N/A";
-    document.getElementById("role").textContent = role || "N/A";
 }
 
 
@@ -34,6 +34,7 @@ function logout(){
     localStorage.removeItem("email");
     localStorage.removeItem("phone");
     localStorage.removeItem("role");
+    localStorage.removeItem("id");
 
     window.location.href = "login.html";
 }
