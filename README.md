@@ -51,9 +51,11 @@ git clone https://github.com/Pranav-p-p/Pistasien.git
 2. Configure the database in `application.properties`
 
 
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/db
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
+```
 
 
 3. Run the application
